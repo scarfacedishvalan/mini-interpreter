@@ -28,7 +28,9 @@ public sealed class Tokenizer
             var ch = Peek();
             var position = _index;
 
-            if (char.IsDigit(ch) || (ch == '.' && char.IsDigit(PeekNext())))
+            if (char.IsDigit(ch)
+                || (ch == '.' && char.IsDigit(PeekNext()))
+                || (ch == '-' && char.IsDigit(PeekNext())))
             {
                 tokens.Add(ReadNumber());
                 continue;
