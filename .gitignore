@@ -1,0 +1,45 @@
+# .NET build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code settings
+.vscode/
+
+# Visual Studio settings
+*.vs/
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+
+# Build logs
+*.log
+
+# NuGet packages
+*.nupkg
+.nuget/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Rider IDE
+.idea/
+*.iml
+
+# Ignore local secrets
+secrets.json
+
+# Ignore coverage reports
+coverage/
+*.lcov
+
+# Ignore markdown temp files
+*.md.tmp
