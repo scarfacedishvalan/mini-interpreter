@@ -10,6 +10,9 @@ public sealed class ExpressionEngineTests
     [InlineData("3.14", 3.14)]
     [InlineData("0.5", 0.5)]
     [InlineData(".5", 0.5)]
+    [InlineData("-3 +4", 1.0)]
+    [InlineData("3 + -2", 1.0)]
+    [InlineData("-(3 + 4)", -7.0)]
     [InlineData("3 + 5 * 2", 13.0)]
     [InlineData("(3 + 5) * 2", 16.0)]
     [InlineData("10 - 4 - 3", 3.0)]
@@ -48,7 +51,7 @@ public sealed class ExpressionEngineTests
     [InlineData("3 +")]
     [InlineData("(3 + 2")]
     [InlineData("3 + * 4")]
-    [InlineData("3 ++ 4")]
+    [InlineData("3 + / 4")]
     [InlineData("3 4")]
     [InlineData("()")]
     public void Evaluate_InvalidExpressions_ThrowParseException(string expression)

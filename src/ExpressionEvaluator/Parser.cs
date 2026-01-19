@@ -61,9 +61,26 @@ public sealed class Parser
         return left;
     }
 
-    // Factor -> Number | '(' Expression ')'
+    // Factor -> ('+' | '-')? (Number | '(' Expression ')')
     private AstNode ParseFactor()
     {
+        if (Current.Type == TokenType.Plus)
+        {
+            Consume(TokenType.Plus);
+            // Unary plus: no-op
+            return ParseFactor();
+        }
+
+        if (Current.Type == TokenType.Minus)
+        {
+            Consume(TokenType.Minus);
+            // Unary minus: 0 - factor
+            return new BinaryExpressionNode(
+                new NumberNode(0),
+                BinaryOperator.Subtract,
+                ParseFactor());
+        }
+
         if (Current.Type == TokenType.Number)
         {
             var number = Consume(TokenType.Number);
