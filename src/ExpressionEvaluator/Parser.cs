@@ -23,27 +23,8 @@ public sealed class Parser
         return expr;
     }
 
-    // Expression -> Term ((+|-) Term)*
+    // Expression -> Factor ((*|/) Factor)*
     private AstNode ParseExpression()
-    {
-        var left = ParseTerm();
-
-        while (Current.Type is TokenType.Plus or TokenType.Minus)
-        {
-            var op = Consume(Current.Type);
-            var right = ParseTerm();
-
-            left = new BinaryExpressionNode(
-                left,
-                op.Type == TokenType.Plus ? BinaryOperator.Add : BinaryOperator.Subtract,
-                right);
-        }
-
-        return left;
-    }
-
-    // Term -> Factor ((*|/) Factor)*
-    private AstNode ParseTerm()
     {
         var left = ParseFactor();
 
@@ -55,6 +36,25 @@ public sealed class Parser
             left = new BinaryExpressionNode(
                 left,
                 op.Type == TokenType.Star ? BinaryOperator.Multiply : BinaryOperator.Divide,
+                right);
+        }
+
+        return left;
+    }
+
+    // Term -> Expression ((+|-) Expression)*
+    private AstNode ParseTerm()
+    {
+        var left = ParseExpression();
+
+        while (Current.Type is TokenType.Plus or TokenType.Minus)
+        {
+            var op = Consume(Current.Type);
+            var right = ParseExpression();
+
+            left = new BinaryExpressionNode(
+                left,
+                op.Type == TokenType.Plus ? BinaryOperator.Add : BinaryOperator.Subtract,
                 right);
         }
 
@@ -74,11 +74,11 @@ public sealed class Parser
         if (Current.Type == TokenType.Minus)
         {
             Consume(TokenType.Minus);
-            // Unary minus: 0 - factor
+            // Unary minus: multiply by -1
             return new BinaryExpressionNode(
-                new NumberNode(0),
-                BinaryOperator.Subtract,
-                ParseFactor());
+                ParseFactor(),
+                BinaryOperator.Multiply,
+                new NumberNode(-1));
         }
 
         if (Current.Type == TokenType.Number)

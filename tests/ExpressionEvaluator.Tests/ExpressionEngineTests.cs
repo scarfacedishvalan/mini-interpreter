@@ -76,4 +76,42 @@ public sealed class ExpressionEngineTests
         var ex = Assert.Throws<EvaluationException>(() => ExpressionEngine.Evaluate("1 / 0"));
         Assert.Contains("Division by zero", ex.Message, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Theory]
+    [InlineData("2 * 3", 6.0)]
+    [InlineData("8 / 4", 2.0)]
+    [InlineData("2 * 3 * 4", 24.0)]
+    [InlineData("100 / 10 / 2", 5.0)]
+    [InlineData("5", 5.0)]
+    [InlineData("-5", -5.0)]
+    [InlineData("(5)", 5.0)]
+    [InlineData("(-5)", -5.0)]
+    public void Evaluate_SimpleCases_ReturnExpected(string expression, double expected)
+    {
+        var actual = ExpressionEngine.Evaluate(expression);
+        Assert.Equal(expected, actual, precision: 10);
+    }
+
+    [Theory]
+    [InlineData("2 + 3 * 4", 14.0)]
+    [InlineData("2 * 3 + 4", 10.0)]
+    [InlineData("10 - 2 * 3", 4.0)]
+    [InlineData("20 / 4 + 1", 6.0)]
+    [InlineData("1 + 20 / 4", 6.0)]
+    public void Evaluate_MixedPrecedence_ReturnExpected(string expression, double expected)
+    {
+        var actual = ExpressionEngine.Evaluate(expression);
+        Assert.Equal(expected, actual, precision: 10);
+    }
+
+    [Theory]
+    [InlineData("--5", 5.0)]
+    [InlineData("-(-5)", 5.0)]
+    [InlineData("-(-(5))", 5.0)]
+    [InlineData("---5", -5.0)]
+    public void Evaluate_NestedUnaryMinus_ReturnExpected(string expression, double expected)
+    {
+        var actual = ExpressionEngine.Evaluate(expression);
+        Assert.Equal(expected, actual, precision: 10);
+    }
 }
